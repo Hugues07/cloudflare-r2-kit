@@ -1,0 +1,47 @@
+{
+  "name": "cloudflare-r2-kit",
+  "version": "1.0.0",
+  "description": "A powerful and lightweight TypeScript utility for Cloudflare R2 object storage. Easily upload, download, and manage files with support for nested object photo mapping and presigned URLs. Perfect for serverless and modern web applications.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nurulislamrimon/cloudflare-r2-kit.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "cloudflare",
+    "cloudflare r2",
+    "r2 storage",
+    "object storage",
+    "aws s3 compatible",
+    "file upload",
+    "file download",
+    "typescript",
+    "presigned url",
+    "photo management",
+    "serverless",
+    "nodejs",
+    "edge functions",
+    "multipart upload"
+  ],
+  "author": "Nurul Islam Rimon",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.500.0",
+    "@aws-sdk/s3-request-presigner": "^3.500.0",
+    "mime-types": "^2.1.35"
+  },
+  "devDependencies": {
+    "@types/mime-types": "^3.0.1",
+    "@types/node": "^24.0.1",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
