@@ -4,6 +4,10 @@
   "description": "A powerful and lightweight TypeScript utility for Cloudflare R2 object storage. Easily upload, download, and manage files with support for nested object photo mapping and presigned URLs. Perfect for serverless and modern web applications.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/nurulislamrimon/cloudflare-r2-kit.git"
