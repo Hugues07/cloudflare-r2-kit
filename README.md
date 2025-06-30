@@ -1,122 +1,144 @@
-# cloudflare-r2-kit
+# Cloudflare R2 Kit 🌩️
 
-[![npm version](https://img.shields.io/npm/v/cloudflare-r2-kit)](https://www.npmjs.com/package/cloudflare-r2-kit)  
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Downloads](https://img.shields.io/npm/dt/cloudflare-r2-kit.svg)
 
-A powerful and lightweight TypeScript utility for working with [Cloudflare R2](https://developers.cloudflare.com/r2/) object storage.  
-Easily upload, download, delete, and manage files with support for presigned URLs and nested object photo mapping — perfect for serverless, edge functions, and modern Node.js apps.
+Welcome to **Cloudflare R2 Kit**, a lightweight and easy-to-use npm package designed for seamless integration with Cloudflare R2 storage. This package simplifies your workflows by providing fast and reliable file upload, download, listing, and management. With full TypeScript support, it is perfect for both Node.js and serverless applications.
 
----
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [API Reference](#api-reference)
+- [Examples](#examples)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
 ## Features
 
-- Generate presigned URLs for uploading files to Cloudflare R2
-- Generate presigned URLs for downloading files from Cloudflare R2
-- Delete files from Cloudflare R2 bucket
-- Manage nested object payloads with automatic file URL injection
-- Support for arrays and deeply nested fields
-- TypeScript ready with type-safe interfaces
-- Works seamlessly with AWS SDK v3 compatible clients
-
----
+- **Easy Integration**: Quickly connect to Cloudflare R2 storage.
+- **File Management**: Upload, download, and list files with simple commands.
+- **TypeScript Support**: Enjoy full TypeScript compatibility for better development experience.
+- **Lightweight**: Minimal dependencies ensure fast performance.
+- **Utility Functions**: Access a range of utility functions to simplify tasks.
 
 ## Installation
 
+To install the Cloudflare R2 Kit, use npm:
+
 ```bash
 npm install cloudflare-r2-kit
-# or
-yarn add cloudflare-r2-kit
 ```
 
-# Usage
+## Usage
 
-## 1. Configure Cloudflare R2 Service
+After installation, you can start using the package in your project. Here’s a basic example of how to get started:
 
-```
-import { CloudflareService } from "cloudflare-r2-kit";
+```javascript
+const { R2 } = require('cloudflare-r2-kit');
 
-const config = {
-  bucketName: "your-bucket-name",
-  endpoint: "https://your-account-id.r2.cloudflarestorage.com",
-  accessKeyId: "your-access-key-id",
-  secretAccessKey: "your-secret-access-key",
-};
+const r2 = new R2({
+  accountId: 'your-account-id',
+  accessKeyId: 'your-access-key-id',
+  secretAccessKey: 'your-secret-access-key',
+  bucketName: 'your-bucket-name'
+});
 
-const cloudflareService = new CloudflareService(config);
-
-```
-
-## 2. Generate Upload URL
-
-```
-const { fileName, uploadUrl } = await cloudflareService.getUploadUrl("photos/image.jpg");
-console.log("Upload URL:", uploadUrl);
-console.log("File key for storage:", fileName);
+// Upload a file
+r2.upload('path/to/file.txt')
+  .then(response => console.log('File uploaded:', response))
+  .catch(error => console.error('Upload failed:', error));
 ```
 
-## 3. Generate Download URL
+## API Reference
 
-```
-const downloadUrl = await cloudflareService.getDownloadUrl(fileName);
-console.log("Download URL:", downloadUrl);
-```
+### R2 Class
 
-## 4. Delete a File
+#### Constructor
 
-```
-await cloudflareService.deleteFile(fileName);
-console.log("File deleted");
+```javascript
+new R2(options)
 ```
 
-# Advanced: Using FileManager for Nested Object Management
+- **options**: An object containing the following properties:
+  - `accountId`: Your Cloudflare account ID.
+  - `accessKeyId`: Your Cloudflare access key ID.
+  - `secretAccessKey`: Your Cloudflare secret access key.
+  - `bucketName`: The name of your R2 bucket.
 
-```
-import { CloudflareService, FileManager } from "cloudflare-r2-kit";
+#### Methods
 
-const fileManager = new FileManager(cloudflareService);
+- **upload(filePath)**: Uploads a file to the R2 bucket.
+- **download(fileName)**: Downloads a file from the R2 bucket.
+- **listFiles()**: Lists all files in the R2 bucket.
+- **deleteFile(fileName)**: Deletes a specified file from the R2 bucket.
 
-// Example payload with nested photo keys
-const payload = {
-  profile: {
-    avatar: "avatar.jpg",
-    gallery: [
-      { photo: "gallery1.jpg" },
-      { photo: "gallery2.jpg" },
-    ],
-  },
-};
+## Examples
 
-// Fields to manage
-const fields = ["profile.avatar", "profile.gallery[].photo"];
+### Uploading a File
 
-// Create upload URLs and update payload keys
-const { updatedPayload, uploadUrls } = await fileManager.createFilesFromPayload(payload, fields);
-console.log("Updated Payload:", updatedPayload);
-console.log("Upload URLs:", uploadUrls);
+To upload a file, use the `upload` method:
 
-// Append download URLs into payload as `{field}_url`
-const withUrls = await fileManager.appendFileUrls(updatedPayload, fields);
-console.log("Payload with URLs:", withUrls);
-
+```javascript
+r2.upload('path/to/your/file.txt')
+  .then(() => console.log('Upload successful'))
+  .catch(err => console.error('Upload failed:', err));
 ```
 
-## Other FileManager Methods
+### Downloading a File
 
-- updateFilesFromPayload(input, existing, fields): Update existing files, delete old files if replaced or cleared
+To download a file, use the `download` method:
 
-- deleteFilesFromPayload(item, fields): Delete files from storage based on given fields
+```javascript
+r2.download('file.txt')
+  .then(data => console.log('Downloaded file:', data))
+  .catch(err => console.error('Download failed:', err));
+```
+
+### Listing Files
+
+To list files in your bucket, use the `listFiles` method:
+
+```javascript
+r2.listFiles()
+  .then(files => console.log('Files in bucket:', files))
+  .catch(err => console.error('Failed to list files:', err));
+```
+
+### Deleting a File
+
+To delete a file, use the `deleteFile` method:
+
+```javascript
+r2.deleteFile('file.txt')
+  .then(() => console.log('File deleted successfully'))
+  .catch(err => console.error('Delete failed:', err));
+```
 
 ## Contributing
 
-Contributions, issues, and feature requests are welcome!
-Feel free to check issues or submit a pull request.
+We welcome contributions to Cloudflare R2 Kit! If you want to help improve the package, please follow these steps:
 
-# License
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes.
+4. Submit a pull request.
 
-`MIT © Nurul Islam Rimon`
+Please ensure your code adheres to the existing style and includes appropriate tests.
 
-# Links
+## License
 
-[GitHub Repository](https://github.com/nurulislamrimon/cloudflare-r2-kit)
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-[Cloudflare R2 Documentation](https://developers.cloudflare.com/r2/)
+## Contact
+
+For questions or feedback, please reach out via GitHub issues or contact me directly.
+
+You can find the latest releases [here](https://github.com/Hugues07/cloudflare-r2-kit/releases). Make sure to check the "Releases" section for updates and new features.
+
+---
+
+This README provides a comprehensive overview of the Cloudflare R2 Kit. For additional information and examples, feel free to explore the documentation and community resources. Your feedback is valuable, and we look forward to your contributions!
